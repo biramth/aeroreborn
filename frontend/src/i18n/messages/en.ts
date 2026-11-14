@@ -153,6 +153,9 @@ export const en = {
     nextWorld: 'Next world',
     nextWorldTitle: 'The journey continues',
   },
+  journey: {
+    anotherLook: 'Another look',
+  },
   machineType: {
     lander: 'Lander',
     rover: 'Rover',

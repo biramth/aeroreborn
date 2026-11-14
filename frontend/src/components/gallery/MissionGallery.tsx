@@ -1,16 +1,19 @@
 import { useEffect, useId, useState } from 'react'
 import { BookOpenText, ListOrdered } from 'lucide-react'
 import { Link, useLocation } from 'react-router'
+import { api } from '@/api/client'
 import type { DestinationDetail } from '@/api/types'
 import { paths } from '@/app/paths'
 import { LoadState } from '@/components/common/LoadState'
 import { Reveal } from '@/components/motion/Reveal'
-import type { ApiState } from '@/hooks/useApi'
+import { MachineJourney } from '@/components/journey/MachineJourney'
+import { MissionScene } from '@/components/journey/MissionScene'
+import { useApi, type ApiState } from '@/hooks/useApi'
 import { useTranslation } from '@/i18n'
 import { formatPartialDate } from '@/lib/formatDate'
+import { bestStill } from '@/lib/journey'
 import { ctaGhost, ctaPrimary, eyebrow } from '@/lib/styles'
 import { cn } from '@/lib/utils'
-import { MachineCard } from './MachineCard'
 import { MissionTimeline } from './MissionTimeline'
 
 interface MissionGalleryProps {
@@ -86,6 +89,10 @@ function MissionSection({ mission, number, total }: MissionSectionProps) {
   const titleId = `mission-${mission.id}-title`
   const period = mission.period?.value
   const padded = String(number).padStart(2, '0')
+  // Photos and timeline of the mission feed the scroll journey (mission photo, then each
+  // machine in 3D with what it did). Until they arrive, each machine shows its plain card.
+  const detail = useApi(`mission:${mission.id}`, (lang, signal) => api.mission(mission.id, lang, signal))
+  const missionDetail = detail.status === 'success' ? detail.data : null
 
   return (
     <section
@@ -104,6 +111,7 @@ function MissionSection({ mission, number, total }: MissionSectionProps) {
         {padded}
       </span>
 
+      <MissionScene cover={missionDetail ? bestStill(missionDetail.media) : undefined}>
       <Reveal>
         <p className={cn(eyebrow, 'text-world')}>
           {t('destination.missionNumber', { number: padded, total: String(total).padStart(2, '0') })}
@@ -139,17 +147,16 @@ function MissionSection({ mission, number, total }: MissionSectionProps) {
           </button>
         </div>
       </Reveal>
+      </MissionScene>
 
       <div id={timelineId} hidden={!timelineOpen} className="mt-8">
         {timelineOpen && <MissionTimeline missionId={mission.id} />}
       </div>
 
       <h4 className="sr-only">{t('destination.machinesTitle')}</h4>
-      <div className="mt-8 grid gap-5 md:grid-cols-2">
-        {mission.machines.map((machine, index) => (
-          <Reveal key={machine.id} delay={(index % 2) * 120}>
-            <MachineCard machine={machine} story={mission.mainStory} />
-          </Reveal>
+      <div className="mt-12 space-y-24">
+        {mission.machines.map((machine) => (
+          <MachineJourney key={machine.id} machine={machine} mission={missionDetail} story={mission.mainStory} />
         ))}
       </div>
     </section>

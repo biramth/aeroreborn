@@ -138,6 +138,7 @@ Règles : un composant par fichier ; un dossier de composants = un domaine ; `pa
 | `InteractiveMap` | Fond de carte SVG, marqueurs, légende, état sélectionné | `MapPoint[]`, `selectedId`, `onSelect` | Charger des données ; connaître les missions |
 | `MapMarker` | `<button>` positionné, nom accessible, états | point, `selected` | — |
 | `MissionGallery` / `MissionGroup` | Groupes par mission, ancres, mise en évidence, défilement | `MissionWithMachines[]`, `selectedId`, `onSelect` | — |
+| `MissionScene` / `MachineJourney` / `MachineStage` (`components/journey/`) | Parcours scrollé de la page destination : photo de mission en fond, puis par machine une scène « sticky » (photo en faux 3D CSS qui entre, tourne, sort) et des chapitres tirés de la frise. Variables CSS écrites par `useSceneMotion` (pas de rendu React au scroll) ; sous mouvement réduit, images dans le flux et aucune animation | `MissionDetail` (photos + frise), `Machine` | Inventer du texte : tout vient de l'API (`lib/journey.ts`) |
 | `MissionJumpBar` | Liens d'ancre vers les groupes | missions | Filtrer (P0) |
 | `MachineCard` | Résumé d'un équipement | `Machine`, `selected` | — |
 | `MachineDetail` | Panneau/dialog de détail, sources, relations, CTA récit, gestion du focus | `Machine`, `relations`, `storyTarget?` | — |

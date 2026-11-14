@@ -151,6 +151,9 @@ export const fr: Messages = {
     nextWorld: 'Monde suivant',
     nextWorldTitle: 'Le voyage continue',
   },
+  journey: {
+    anotherLook: 'Un autre regard',
+  },
   machineType: {
     lander: 'Atterrisseur',
     rover: 'Rover',

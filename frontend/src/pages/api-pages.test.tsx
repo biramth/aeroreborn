@@ -62,6 +62,31 @@ describe('destination page (connected to the API)', () => {
     expect(screen.getAllByText(/This image cannot be shown right now/).length).toBeGreaterThan(0)
   })
 
+  it('tells each machine as a scroll journey: mission photo, machine, then what it did', async () => {
+    renderRoute('/explore/mars')
+    const mission = await screen.findByRole('region', { name: 'Test Mission' })
+    const machineScene = await within(mission).findByRole('region', { name: 'Test Rover' })
+    // The machine photo is on the 3D stage, with its credit.
+    expect(within(machineScene).getAllByAltText('A rover on the ground').length).toBeGreaterThan(0)
+    // "What it did": the timeline step that shows this machine, with its sourced date.
+    expect(await within(machineScene).findByRole('heading', { level: 5, name: 'Landing' })).toBeInTheDocument()
+    expect(within(machineScene).getByText('The rover bounces on its airbags.')).toBeInTheDocument()
+  })
+
+  it('shows every picture inside its step, without the animated stage, under reduced motion', async () => {
+    vi.stubGlobal('matchMedia', (query: string) => ({
+      matches: query.includes('reduce'),
+      media: query,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+    }))
+    renderRoute('/explore/mars')
+    const machineScene = await screen.findByRole('region', { name: 'Test Rover' })
+    const landing = (await within(machineScene).findByRole('heading', { level: 5, name: 'Landing' })).closest('article')!
+    expect(within(landing).getByAltText('A rover on the ground')).toBeInTheDocument()
+    expect(machineScene.querySelector('.journey-card')).toBeNull()
+  })
+
   it('shows the mission step by step', async () => {
     const user = userEvent.setup()
     renderRoute('/explore/mars')
