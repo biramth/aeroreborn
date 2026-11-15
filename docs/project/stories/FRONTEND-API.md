@@ -31,10 +31,16 @@
 ## Limites connues
 
 - **Sous-titres vidéo** : les vidéos NASA n'ont pas de piste `<track>` (avertissement lint `media-has-caption`). Les manifestes NASA fournissent parfois des fichiers `.srt`/`.vtt` : à ajouter au modèle `Media`.
-- **Pas de sélecteur de langue** : l'interface et l'API gèrent `fr`/`en`, mais rien ne permet encore de changer de langue à l'écran (OPEN-06).
+- ~~Pas de sélecteur de langue~~ → **fait** (voir ci-dessous).
 - **Pas de carte 2D** (US-3.3/3.4).
 - **Production** : `VITE_API_BASE_URL` doit pointer vers l'API déployée ; l'hébergement de l'API reste à décider (OPEN-05).
 - **Lighthouse** non exécuté.
+
+## Langue EN / FR (2026-11-14)
+
+- Le **sélecteur EN/FR de l'en-tête vient de `main`** (`LanguageSwitch`, refonte US-5.6). Ma PR #7 proposait un second sélecteur (`LanguageSwitcher`). Lors de la résolution du conflit avec `main`, je l'ai **retiré** pour ne pas dupliquer le composant, et ses clés `language.*` avec lui, puisque `main` a déjà `lang.*`.
+- **Ajout conservé** : la **langue au premier passage** (proposition, OPEN-06). C'est le choix enregistré s'il existe, sinon la **première langue supportée** dans l'ordre de préférence du navigateur (`["en-US","fr-FR"]` → anglais ; `["wo-SN","fr"]` → français), sinon l'anglais. Le code est dans `src/i18n/localeStorage.ts`, utilisé par `I18nProvider`, qui continue de mémoriser le choix (clé `aeroreborn.locale`) sans erreur si le stockage est bloqué.
+- Changer de langue recharge le contenu de l'API dans la langue choisie (`useApi` dépend de la langue) : un test le vérifie.
 
 ## Revue humaine
 
